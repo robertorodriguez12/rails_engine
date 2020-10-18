@@ -31,6 +31,12 @@ class Api::V1::MerchantsController < ApplicationController
     render json: merchant
   end
 
+  def destroy
+    merchant = Merchant.find(params[:id])
+    merchant.items.destroy_all
+    merchant.destroy
+  end
+
   private
 
   def merchant_params
