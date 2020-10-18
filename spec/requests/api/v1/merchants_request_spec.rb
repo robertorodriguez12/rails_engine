@@ -52,15 +52,31 @@ RSpec.describe 'MERCHANT API' do
     expect(merchant[:attributes][:name]).to be_an(String)
   end
 
-  it "can create a new merchant" do
+  it 'can create a new merchant' do
     merchant_params = ({name: 'Wacky Daves'})
-
     headers = {"CONTENT_TYPE" => "application/json"}
     post "/api/v1/merchants", headers: headers, params: JSON.generate(merchant: merchant_params)
 
     created_merchant = Merchant.last
 
     expect(response).to be_successful
+    
     expect(created_merchant.name).to eq(merchant_params[:name])
+  end
+
+  it 'can update an existing merchant' do
+    id = create(:merchant).id
+    previous_name = Merchant.last.name
+
+    merchant_params = { name: "Wacky Daves" }
+    headers = {"CONTENT_TYPE" => "application/json"}
+    patch "/api/v1/merchants/#{id}", headers: headers, params: JSON.generate({merchant: merchant_params})
+
+    merchant = Merchant.find(id)
+
+    expect(response).to be_successful
+
+    expect(merchant.name).to_not eq(previous_name)
+    expect(merchant.name).to eq(merchant_params[:name])
   end
 end
