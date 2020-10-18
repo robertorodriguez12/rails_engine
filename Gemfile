@@ -31,6 +31,7 @@ gem 'bootsnap', '>= 1.1.0', require: false
 group :development, :test do
   gem 'pry'
   gem 'rspec-rails'
+  gem 'capybara'
 end
 
 group :development do
