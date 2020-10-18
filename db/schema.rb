@@ -26,7 +26,7 @@ ActiveRecord::Schema.define(version: 2020_10_18_160204) do
     t.bigint "item_id"
     t.bigint "invoice_id"
     t.integer "quantity"
-    t.float "unit_price"
+    t.integer "unit_price"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["invoice_id"], name: "index_invoice_items_on_invoice_id"
@@ -46,7 +46,7 @@ ActiveRecord::Schema.define(version: 2020_10_18_160204) do
   create_table "items", force: :cascade do |t|
     t.string "name"
     t.string "description"
-    t.float "unit_price"
+    t.integer "unit_price"
     t.bigint "merchant_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -61,7 +61,7 @@ ActiveRecord::Schema.define(version: 2020_10_18_160204) do
 
   create_table "transactions", force: :cascade do |t|
     t.bigint "invoice_id"
-    t.integer "credit_card_number"
+    t.bigint "credit_card_number"
     t.string "credit_card_expiration_date"
     t.string "result"
     t.datetime "created_at", null: false
