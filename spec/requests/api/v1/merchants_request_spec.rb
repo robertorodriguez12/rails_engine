@@ -16,7 +16,7 @@ RSpec.describe 'MERCHANT API' do
 
     merchants.each do |merchant|
       expect(merchant).to have_key(:id)
-      expect(merchant[:id]).to be_an(Integer)
+      expect(merchant[:id]).to be_an(String)
 
       expect(merchant).to have_key(:type)
       expect(merchant[:type]).to be_an(String)
@@ -40,7 +40,7 @@ RSpec.describe 'MERCHANT API' do
     merchant = json[:data]
 
     expect(merchant).to have_key(:id)
-    expect(merchant[:id]).to be_an(Integer)
+    expect(merchant[:id]).to be_an(String)
 
     expect(merchant).to have_key(:type)
     expect(merchant[:type]).to be_an(String)
@@ -50,5 +50,17 @@ RSpec.describe 'MERCHANT API' do
 
     expect(merchant[:attributes]).to have_key(:name)
     expect(merchant[:attributes][:name]).to be_an(String)
+  end
+
+  it "can create a new merchant" do
+    merchant_params = ({name: 'Wacky Daves'})
+
+    headers = {"CONTENT_TYPE" => "application/json"}
+    post "/api/v1/merchants", headers: headers, params: JSON.generate(merchant: merchant_params)
+
+    created_merchant = Merchant.last
+
+    expect(response).to be_successful
+    expect(created_merchant.name).to eq(merchant_params[:name])
   end
 end
