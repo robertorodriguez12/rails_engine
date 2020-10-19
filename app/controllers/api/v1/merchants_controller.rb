@@ -17,8 +17,7 @@ class Api::V1::MerchantsController < ApplicationController
 
   def destroy
     merchant = Merchant.find(params[:id])
-    merchant.items.destroy_all
-    merchant.destroy
+    merchant.destroy_merchant_and_associations
   end
 
   private
