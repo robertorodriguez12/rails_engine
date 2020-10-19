@@ -57,4 +57,21 @@ RSpec.describe 'ITEM API' do
     expect(item[:attributes][:unit_price]).to be_an(Float)
     expect(item[:attributes][:merchant_id]).to be_an(Integer)
   end
+
+  it 'can create a new item' do
+    merchant = create(:merchant)
+
+    item_params = { name: 'Ball',
+                    description: 'A basic ball',
+                    unit_price: 132.0,
+                    merchant_id: merchant.id }
+    headers = {"CONTENT_TYPE" => "application/json"}
+    post "/api/v1/items", headers: headers, params: JSON.generate(item_params)
+
+    created_item = Item.last
+
+    expect(response).to be_successful
+
+    expect(created_item.name).to eq(item_params[:name])
+  end
 end
