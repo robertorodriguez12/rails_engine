@@ -1,34 +1,18 @@
 class Api::V1::MerchantsController < ApplicationController
   def index
-    merchants = { data: Merchant.select("id, name").map do |merchant|
-                        {id: merchant.id.to_s,
-                         type: 'merchant',
-                         attributes: {name: merchant.name}}
-                      end }
-
-    render json: merchants
+    render json: MerchantSerializer.new(Merchant.all)
   end
 
   def show
-    found = Merchant.find(params[:id])
-    merchant = { data: {id: found.id.to_s, type: 'merchant', attributes: {name: found.name}}}
-
-    render json: merchant
+    render json: MerchantSerializer.new(Merchant.find(params[:id]))
   end
 
   def create
-    new = Merchant.create(merchant_params)
-    merchant = { data: {id: new.id.to_s, type: 'merchant', attributes: {name: new.name}}}
-
-    render json: merchant
+    render json: MerchantSerializer.new(Merchant.create(merchant_params))
   end
 
   def update
-    found = Merchant.find(params[:id])
-    found.update(merchant_params)
-    merchant = { data: {id: found.id.to_s, type: 'merchant', attributes: {name: found.name}}}
-
-    render json: merchant
+    render json: MerchantSerializer.new(Merchant.update(params[:id], merchant_params))
   end
 
   def destroy
