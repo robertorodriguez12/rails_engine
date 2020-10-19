@@ -26,7 +26,7 @@ ActiveRecord::Base.connection.reset_pk_sequence!('merchants')
 
 items = []
 CSV.foreach('./app/csvs/items.csv', headers: true, header_converters: :symbol) do |data|
-  items << Item.new(id: data[:id], name: data[:name], description: data[:description], unit_price: data[:unit_price], merchant_id: data[:merchant_id])
+  items << Item.new(id: data[:id], name: data[:name], description: data[:description], unit_price: (data[:unit_price].to_f / 100), merchant_id: data[:merchant_id])
 end
 Item.import(items)
 ActiveRecord::Base.connection.reset_pk_sequence!('items')
@@ -47,7 +47,7 @@ ActiveRecord::Base.connection.reset_pk_sequence!('invoices')
 
 invoice_items = []
 CSV.foreach('./app/csvs/invoice_items.csv', headers: true, header_converters: :symbol) do |data|
-  invoice_items << InvoiceItem.new(id: data[:id], item_id: data[:item_id], invoice_id: data[:invoice_id], quantity: data[:quantity], unit_price: data[:unit_price])
+  invoice_items << InvoiceItem.new(id: data[:id], item_id: data[:item_id], invoice_id: data[:invoice_id], quantity: data[:quantity], unit_price: (data[:unit_price].to_f / 100))
 end
 InvoiceItem.import(invoice_items)
 ActiveRecord::Base.connection.reset_pk_sequence!('invoice_items')
