@@ -169,5 +169,65 @@ RSpec.describe 'MERCHANT API SEARCH' do
         end
       end
     end
+
+    describe 'merchant created_at' do
+      before :each do
+        create(:merchant, created_at: Date.yesterday)
+        create(:merchant, created_at: Date.today)
+      end
+
+      it 'returns a list of merchants created at specific day' do
+        get "/api/v1/merchants/find_all?created_at=#{Date.yesterday.to_s}"
+        expect(response).to be_successful
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json).to have_key(:data)
+        expect(json[:data]).to be_a(Array)
+        expect(json[:data].count).to eq(1)
+        expect(json[:data].first).to have_key(:id)
+        expect(json[:data].first[:id]).to_not be_empty
+        expect(json[:data].first).to have_key(:type)
+        expect(json[:data].first[:type]).to_not be_empty
+        expect(json[:data].first).to have_key(:attributes)
+        expect(json[:data].first[:attributes]).to be_a(Hash)
+        expect(json[:data].first[:attributes]).to have_key(:name)
+        expect(json[:data].first[:attributes]).to_not be_empty
+      end
+
+      it 'returns 204 if no date found' do
+        get "/api/v1/merchants/find_all?created_at=#{Date.tomorrow}"
+        expect(response).to be_successful
+        expect(response.status).to eq(204)
+      end
+    end
+
+    describe 'merchant updated_at' do
+      before :each do
+        create(:merchant, updated_at: Date.yesterday)
+        create(:merchant, updated_at: Date.today)
+      end
+
+      it 'returns a list of merchants created at specific day' do
+        get "/api/v1/merchants/find_all?updated_at=#{Date.yesterday.to_s}"
+        expect(response).to be_successful
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json).to have_key(:data)
+        expect(json[:data]).to be_a(Array)
+        expect(json[:data].count).to eq(1)
+        expect(json[:data].first).to have_key(:id)
+        expect(json[:data].first[:id]).to_not be_empty
+        expect(json[:data].first).to have_key(:type)
+        expect(json[:data].first[:type]).to_not be_empty
+        expect(json[:data].first).to have_key(:attributes)
+        expect(json[:data].first[:attributes]).to be_a(Hash)
+        expect(json[:data].first[:attributes]).to have_key(:name)
+        expect(json[:data].first[:attributes]).to_not be_empty
+      end
+
+      it 'returns 204 if no date found' do
+        get "/api/v1/merchants/find_all?updated_at=#{Date.tomorrow}"
+        expect(response).to be_successful
+        expect(response.status).to eq(204)
+      end
+    end
   end
 end
