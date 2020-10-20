@@ -228,4 +228,232 @@ RSpec.describe 'ITEM API SEARCH' do
       end
     end
   end
+
+  describe 'multi-finder' do
+    describe 'item name' do
+      before :each do
+        create_list(:item, 3)
+      end
+
+      describe 'happy' do
+        after :each do
+          expect(@json).to have_key(:data)
+          expect(@json[:data]).to be_an(Array)
+          expect(@json[:data].first).to have_key(:id)
+          expect(@json[:data].first[:id]).to_not be_empty
+          expect(@json[:data].first).to have_key(:type)
+          expect(@json[:data].first[:type]).to_not be_empty
+          expect(@json[:data].first).to have_key(:attributes)
+          expect(@json[:data].first[:attributes]).to be_a(Hash)
+          expect(@json[:data].first[:attributes]).to have_key(:name)
+          expect(@json[:data].first[:attributes][:name]).to be_a(String)
+          expect(@json[:data].first[:attributes]).to have_key(:description)
+          expect(@json[:data].first[:attributes][:description]).to be_a(String)
+          expect(@json[:data].first[:attributes]).to have_key(:unit_price)
+          expect(@json[:data].first[:attributes][:unit_price]).to be_a(Float)
+          expect(@json[:data].first[:attributes]).to have_key(:merchant_id)
+          expect(@json[:data].first[:attributes][:merchant_id]).to be_a(Integer)
+        end
+
+        it 'returns a list of items by searching for full name' do
+          get '/api/v1/items/find_all?name=MyString'
+          expect(response).to be_successful
+          @json = JSON.parse(response.body, symbolize_names: true)
+        end
+
+        it 'returns a list of items by searching for partial name - lower case' do
+          get '/api/v1/items/find_all?name=ring'
+          expect(response).to be_successful
+          @json = JSON.parse(response.body, symbolize_names: true)
+        end
+
+        it 'returns a list of items by searching for partial name - upper case' do
+          get '/api/v1/items/find_all?name=RING'
+          expect(response).to be_successful
+          @json = JSON.parse(response.body, symbolize_names: true)
+        end
+
+        it 'returns a list of items by searching for partial name - mixed' do
+          get '/api/v1/items/find_all?name=myS'
+          expect(response).to be_successful
+          @json = JSON.parse(response.body, symbolize_names: true)
+        end
+      end
+
+      describe 'sad' do
+        it 'returns 204 if no match found' do
+          get '/api/v1/items/find_all?name=blonde'
+          expect(response).to be_successful
+          expect(response.status).to eq(204)
+        end
+      end
+    end
+
+    describe 'item description' do
+      before :each do
+        create_list(:item, 3)
+      end
+
+      describe 'happy' do
+        after :each do
+          expect(@json).to have_key(:data)
+          expect(@json[:data]).to be_a(Array)
+          expect(@json[:data].first).to have_key(:id)
+          expect(@json[:data].first[:id]).to_not be_empty
+          expect(@json[:data].first).to have_key(:type)
+          expect(@json[:data].first[:type]).to_not be_empty
+          expect(@json[:data].first).to have_key(:attributes)
+          expect(@json[:data].first[:attributes]).to be_a(Hash)
+          expect(@json[:data].first[:attributes]).to have_key(:name)
+          expect(@json[:data].first[:attributes][:name]).to be_a(String)
+          expect(@json[:data].first[:attributes]).to have_key(:description)
+          expect(@json[:data].first[:attributes][:description]).to be_a(String)
+          expect(@json[:data].first[:attributes]).to have_key(:unit_price)
+          expect(@json[:data].first[:attributes][:unit_price]).to be_a(Float)
+          expect(@json[:data].first[:attributes]).to have_key(:merchant_id)
+          expect(@json[:data].first[:attributes][:merchant_id]).to be_a(Integer)
+        end
+
+        it 'returns a list of items by searching for full description' do
+          get '/api/v1/items/find_all?description=MyString'
+          expect(response).to be_successful
+          @json = JSON.parse(response.body, symbolize_names: true)
+        end
+
+        it 'returns a list of items by searching for partial description - lower case' do
+          get '/api/v1/items/find_all?description=ring'
+          expect(response).to be_successful
+          @json = JSON.parse(response.body, symbolize_names: true)
+        end
+
+        it 'returns a list of items by searching for partial description - upper case' do
+          get '/api/v1/items/find_all?description=RING'
+          expect(response).to be_successful
+          @json = JSON.parse(response.body, symbolize_names: true)
+        end
+
+        it 'returns a list of items by searching for partial description - mixed' do
+          get '/api/v1/items/find_all?description=myS'
+          expect(response).to be_successful
+          @json = JSON.parse(response.body, symbolize_names: true)
+        end
+      end
+
+      describe 'sad' do
+        it 'returns 204 if no match found' do
+          get '/api/v1/items/find_all?description=blonde'
+          expect(response).to be_successful
+          expect(response.status).to eq(204)
+        end
+      end
+    end
+
+    describe 'item unit_price' do
+      before :each do
+        create_list(:item, 3)
+      end
+
+      describe 'happy' do
+        it 'returns a single item by searching by unit_price' do
+          get '/api/v1/items/find_all?unit_price=1.5'
+          expect(response).to be_successful
+          json = JSON.parse(response.body, symbolize_names: true)
+          expect(json).to have_key(:data)
+          expect(json[:data]).to be_a(Array)
+          expect(json[:data].first).to have_key(:id)
+          expect(json[:data].first[:id]).to_not be_empty
+          expect(json[:data].first).to have_key(:type)
+          expect(json[:data].first[:type]).to_not be_empty
+          expect(json[:data].first).to have_key(:attributes)
+          expect(json[:data].first[:attributes]).to be_a(Hash)
+          expect(json[:data].first[:attributes]).to have_key(:name)
+          expect(json[:data].first[:attributes][:name]).to be_a(String)
+          expect(json[:data].first[:attributes]).to have_key(:description)
+          expect(json[:data].first[:attributes][:description]).to be_a(String)
+          expect(json[:data].first[:attributes]).to have_key(:unit_price)
+          expect(json[:data].first[:attributes][:unit_price]).to be_a(Float)
+          expect(json[:data].first[:attributes]).to have_key(:merchant_id)
+          expect(json[:data].first[:attributes][:merchant_id]).to be_a(Integer)
+        end
+      end
+
+      describe 'sad' do
+        it 'returns 204 if no match found' do
+          get '/api/v1/items/find_all?unit_price=2.0'
+          expect(response).to be_successful
+          expect(response.status).to eq(204)
+        end
+      end
+    end
+
+    describe 'item created_at' do
+      before :each do
+        create(:item, created_at: Date.yesterday)
+        create(:item, created_at: Date.today)
+      end
+
+      it 'returns a single item created at specific day' do
+        get "/api/v1/items/find_all?created_at=#{Date.yesterday.to_s}"
+        expect(response).to be_successful
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json).to have_key(:data)
+        expect(json[:data]).to be_a(Array)
+        expect(json[:data].first).to have_key(:id)
+        expect(json[:data].first[:id]).to_not be_empty
+        expect(json[:data].first).to have_key(:type)
+        expect(json[:data].first[:type]).to_not be_empty
+        expect(json[:data].first).to have_key(:attributes)
+        expect(json[:data].first[:attributes]).to be_a(Hash)
+        expect(json[:data].first[:attributes]).to have_key(:name)
+        expect(json[:data].first[:attributes][:name]).to be_a(String)
+        expect(json[:data].first[:attributes]).to have_key(:description)
+        expect(json[:data].first[:attributes][:description]).to be_a(String)
+        expect(json[:data].first[:attributes]).to have_key(:unit_price)
+        expect(json[:data].first[:attributes][:unit_price]).to be_a(Float)
+        expect(json[:data].first[:attributes]).to have_key(:merchant_id)
+        expect(json[:data].first[:attributes][:merchant_id]).to be_a(Integer)
+      end
+
+      it 'returns 204 if no date found' do
+        get "/api/v1/items/find_all?created_at=#{Date.tomorrow}"
+        expect(response).to be_successful
+        expect(response.status).to eq(204)
+      end
+    end
+
+    describe 'item updated_at' do
+      before :each do
+        create(:item, created_at: Date.yesterday)
+        create(:item, created_at: Date.yesterday, updated_at: Date.today)
+      end
+
+      it 'returns a single item updated at specific day' do
+        get "/api/v1/items/find_all?updated_at=#{Date.today.to_s}"
+        expect(response).to be_successful
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json).to have_key(:data)
+        expect(json[:data]).to be_a(Array)
+        expect(json[:data].first).to have_key(:id)
+        expect(json[:data].first[:id]).to_not be_empty
+        expect(json[:data].first).to have_key(:type)
+        expect(json[:data].first[:type]).to_not be_empty
+        expect(json[:data].first).to have_key(:attributes)
+        expect(json[:data].first[:attributes]).to be_a(Hash)
+        expect(json[:data].first[:attributes]).to have_key(:name)
+        expect(json[:data].first[:attributes][:name]).to be_a(String)
+        expect(json[:data].first[:attributes]).to have_key(:description)
+        expect(json[:data].first[:attributes][:description]).to be_a(String)
+        expect(json[:data].first[:attributes]).to have_key(:unit_price)
+        expect(json[:data].first[:attributes][:unit_price]).to be_a(Float)
+        expect(json[:data].first[:attributes]).to have_key(:merchant_id)
+        expect(json[:data].first[:attributes][:merchant_id]).to be_a(Integer)
+      end
+
+      it 'returns 204 if no date found' do
+        get "/api/v1/items/find_all?created_at=#{Date.tomorrow}"
+        expect(response).to be_successful
+        expect(response.status).to eq(204)
+      end
+    end
+  end
 end
