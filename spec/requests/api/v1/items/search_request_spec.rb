@@ -192,5 +192,40 @@ RSpec.describe 'ITEM API SEARCH' do
         expect(response.status).to eq(204)
       end
     end
+
+    describe 'item updated_at' do
+      before :each do
+        create(:item, created_at: Date.yesterday)
+        create(:item, created_at: Date.yesterday, updated_at: Date.today)
+      end
+
+      it 'returns a single item updated at specific day' do
+        get "/api/v1/items/find?updated_at=#{Date.today.to_s}"
+        expect(response).to be_successful
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json).to have_key(:data)
+        expect(json[:data]).to be_a(Hash)
+        expect(json[:data]).to have_key(:id)
+        expect(json[:data][:id]).to_not be_empty
+        expect(json[:data]).to have_key(:type)
+        expect(json[:data][:type]).to_not be_empty
+        expect(json[:data]).to have_key(:attributes)
+        expect(json[:data][:attributes]).to be_a(Hash)
+        expect(json[:data][:attributes]).to have_key(:name)
+        expect(json[:data][:attributes][:name]).to be_a(String)
+        expect(json[:data][:attributes]).to have_key(:description)
+        expect(json[:data][:attributes][:description]).to be_a(String)
+        expect(json[:data][:attributes]).to have_key(:unit_price)
+        expect(json[:data][:attributes][:unit_price]).to be_a(Float)
+        expect(json[:data][:attributes]).to have_key(:merchant_id)
+        expect(json[:data][:attributes][:merchant_id]).to be_a(Integer)
+      end
+
+      it 'returns 204 if no date found' do
+        get "/api/v1/items/find?created_at=#{Date.tomorrow}"
+        expect(response).to be_successful
+        expect(response.status).to eq(204)
+      end
+    end
   end
 end
