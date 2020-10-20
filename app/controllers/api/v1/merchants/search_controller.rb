@@ -1,4 +1,10 @@
 class Api::V1::Merchants::SearchController < ApplicationController
+  def index
+    merchants = Merchant.where('name ILIKE ?', "%#{params[:name].downcase}%")
+    return nil if merchants.empty?
+    render json: MerchantSerializer.new(merchants)
+  end
+
   def show
     if params[:created_at] || params[:updated_at]
       if params[:created_at]
@@ -10,7 +16,7 @@ class Api::V1::Merchants::SearchController < ApplicationController
       end
       return nil if merchant == nil
       render json: MerchantSerializer.new(merchant)
-    else
+    else #params[:name]
       merchant = Merchant.find_by('name ILIKE ?', "%#{params[:name].downcase}%")
       return nil if merchant == nil
       render json: MerchantSerializer.new(merchant)
